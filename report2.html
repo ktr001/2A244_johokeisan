@@ -1,0 +1,161 @@
+<div class="cell code">
+<div class="sourceCode" id="cb1"><pre class="sourceCode python"><code class="sourceCode python"></code></pre></div>
+</div>
+<section id="情報計算科学の基礎" class="cell markdown">
+<h1>情報計算科学の基礎</h1>
+<p>レポート2</p>
+<p><span class="math inline"><em>d</em><sup>2</sup><em>u</em>/<em>d</em><em>x</em><sup>2</sup> = 0</span></p>
+<p><span class="math inline"><em>u</em> = 0@<em>x</em> = 0, <em>u</em> = 1@<em>x</em> = 1</span></p>
+</section>
+<div class="cell code" data-execution_count="13">
+<div class="sourceCode" id="cb2"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-2"><a href="#cb2-2"></a><span class="im">import</span> math</span>
+<span id="cb2-3"><a href="#cb2-3"></a></span>
+<span id="cb2-4"><a href="#cb2-4"></a><span class="kw">def</span> gausselimination_withpivot(n,A,b):</span>
+<span id="cb2-5"><a href="#cb2-5"></a>  x <span class="op">=</span> np.zeros(n)</span>
+<span id="cb2-6"><a href="#cb2-6"></a>  Aorg <span class="op">=</span> np.copy(A)</span>
+<span id="cb2-7"><a href="#cb2-7"></a>  borg <span class="op">=</span> np.copy(b)</span>
+<span id="cb2-8"><a href="#cb2-8"></a></span>
+<span id="cb2-9"><a href="#cb2-9"></a>  <span class="co">#前進消去</span></span>
+<span id="cb2-10"><a href="#cb2-10"></a>  <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(n):</span>
+<span id="cb2-11"><a href="#cb2-11"></a>    <span class="co">#ピポット選択</span></span>
+<span id="cb2-12"><a href="#cb2-12"></a>    <span class="cf">if</span> A[j][j] <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb2-13"><a href="#cb2-13"></a>      <span class="bu">list</span> <span class="op">=</span> [A[i][j] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(j<span class="op">+</span><span class="dv">1</span>,n)]</span>
+<span id="cb2-14"><a href="#cb2-14"></a>      abs_list <span class="op">=</span> [<span class="bu">abs</span>(i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">list</span>]</span>
+<span id="cb2-15"><a href="#cb2-15"></a>      m <span class="op">=</span> abs_list.index(<span class="bu">max</span>(abs_list))</span>
+<span id="cb2-16"><a href="#cb2-16"></a>      p <span class="op">=</span> m <span class="op">+</span> j <span class="op">+</span> <span class="dv">1</span></span>
+<span id="cb2-17"><a href="#cb2-17"></a>      <span class="co">#交換</span></span>
+<span id="cb2-18"><a href="#cb2-18"></a>      b[j],b[p] <span class="op">=</span> b[p],b[j]</span>
+<span id="cb2-19"><a href="#cb2-19"></a>      <span class="cf">for</span> c <span class="kw">in</span> <span class="bu">range</span>(n):</span>
+<span id="cb2-20"><a href="#cb2-20"></a>        A[j][c],A[p][c] <span class="op">=</span> A[p][c],A[j][c]</span>
+<span id="cb2-21"><a href="#cb2-21"></a></span>
+<span id="cb2-22"><a href="#cb2-22"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(j<span class="op">+</span><span class="dv">1</span>,n,<span class="dv">1</span>):</span>
+<span id="cb2-23"><a href="#cb2-23"></a>      coe<span class="op">=-</span>A[i][j]<span class="op">/</span>A[j][j]</span>
+<span id="cb2-24"><a href="#cb2-24"></a>      <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(j,n,<span class="dv">1</span>):</span>
+<span id="cb2-25"><a href="#cb2-25"></a>        A[i][k]<span class="op">+=</span>coe<span class="op">*</span>A[j][k]</span>
+<span id="cb2-26"><a href="#cb2-26"></a>      b[i]<span class="op">+=</span>coe<span class="op">*</span>b[j]</span>
+<span id="cb2-27"><a href="#cb2-27"></a>    </span>
+<span id="cb2-28"><a href="#cb2-28"></a>  <span class="co">#後退代入・結果出力</span></span>
+<span id="cb2-29"><a href="#cb2-29"></a>  <span class="cf">for</span> j <span class="kw">in</span> <span class="bu">range</span>(n<span class="dv">-1</span>,<span class="op">-</span><span class="dv">1</span>,<span class="op">-</span><span class="dv">1</span>):</span>
+<span id="cb2-30"><a href="#cb2-30"></a>    btmp<span class="op">=</span>b[j]</span>
+<span id="cb2-31"><a href="#cb2-31"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n<span class="dv">-1</span>,j,<span class="op">-</span><span class="dv">1</span>):</span>
+<span id="cb2-32"><a href="#cb2-32"></a>      btmp <span class="op">-=</span> A[j][i]<span class="op">*</span>x[i]</span>
+<span id="cb2-33"><a href="#cb2-33"></a>    x[j]<span class="op">=</span>btmp<span class="op">/</span>A[j][j]</span>
+<span id="cb2-34"><a href="#cb2-34"></a>  <span class="cf">return</span> x</span>
+<span id="cb2-35"><a href="#cb2-35"></a></span>
+<span id="cb2-36"><a href="#cb2-36"></a></span>
+<span id="cb2-37"><a href="#cb2-37"></a></span>
+<span id="cb2-38"><a href="#cb2-38"></a><span class="kw">def</span> create_K_elem(node_from,node_to):</span>
+<span id="cb2-39"><a href="#cb2-39"></a>  ds <span class="op">=</span> <span class="bu">abs</span>(node_to <span class="op">-</span> node_from)</span>
+<span id="cb2-40"><a href="#cb2-40"></a>  <span class="cf">return</span> np.array(([<span class="dv">1</span><span class="op">/</span>ds,<span class="op">-</span><span class="dv">1</span><span class="op">/</span>ds],[<span class="op">-</span><span class="dv">1</span><span class="op">/</span>ds,<span class="dv">1</span><span class="op">/</span>ds]))</span>
+<span id="cb2-41"><a href="#cb2-41"></a></span>
+<span id="cb2-42"><a href="#cb2-42"></a></span>
+<span id="cb2-43"><a href="#cb2-43"></a><span class="kw">def</span> fill_K_glob(coord:<span class="bu">list</span>,N_SIZE_in:<span class="bu">int</span>):</span>
+<span id="cb2-44"><a href="#cb2-44"></a>    K_glob_in <span class="op">=</span> np.zeros((N_SIZE_in,N_SIZE_in))</span>
+<span id="cb2-45"><a href="#cb2-45"></a>    K_elems <span class="op">=</span> <span class="bu">list</span>()</span>
+<span id="cb2-46"><a href="#cb2-46"></a>    <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N_SIZE_in <span class="op">-</span> <span class="dv">1</span>):</span>
+<span id="cb2-47"><a href="#cb2-47"></a>        K_elems.append(create_K_elem(coord[i],coord[i<span class="op">+</span><span class="dv">1</span>]))</span>
+<span id="cb2-48"><a href="#cb2-48"></a>        K_glob_in[i][i]     <span class="op">+=</span> K_elems[i][<span class="dv">0</span>][<span class="dv">0</span>]</span>
+<span id="cb2-49"><a href="#cb2-49"></a>        K_glob_in[i][i<span class="op">+</span><span class="dv">1</span>]   <span class="op">+=</span> K_elems[i][<span class="dv">0</span>][<span class="dv">1</span>]</span>
+<span id="cb2-50"><a href="#cb2-50"></a>        K_glob_in[i<span class="op">+</span><span class="dv">1</span>][i]   <span class="op">+=</span> K_elems[i][<span class="dv">1</span>][<span class="dv">0</span>]</span>
+<span id="cb2-51"><a href="#cb2-51"></a>        K_glob_in[i<span class="op">+</span><span class="dv">1</span>][i<span class="op">+</span><span class="dv">1</span>] <span class="op">+=</span> K_elems[i][<span class="dv">1</span>][<span class="dv">1</span>]</span>
+<span id="cb2-52"><a href="#cb2-52"></a>    <span class="cf">return</span> K_glob_in</span>
+<span id="cb2-53"><a href="#cb2-53"></a></span>
+<span id="cb2-54"><a href="#cb2-54"></a><span class="kw">def</span> solve_with_cricon(N_SIZE_in:<span class="bu">int</span>,K_glob_in,b_in,U_init:<span class="bu">list</span>):</span>
+<span id="cb2-55"><a href="#cb2-55"></a>    K_del <span class="op">=</span> np.delete(K_glob_in,[<span class="dv">0</span>,<span class="op">-</span><span class="dv">1</span>],<span class="dv">0</span>)</span>
+<span id="cb2-56"><a href="#cb2-56"></a>    <span class="co"># print(K_del)</span></span>
+<span id="cb2-57"><a href="#cb2-57"></a>    b_del <span class="op">=</span> b_in[<span class="dv">1</span>:<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb2-58"><a href="#cb2-58"></a>    <span class="co"># print(b_del)</span></span>
+<span id="cb2-59"><a href="#cb2-59"></a>    u_known <span class="op">=</span> np.array(U_init)</span>
+<span id="cb2-60"><a href="#cb2-60"></a>    <span class="co"># print(u_known)</span></span>
+<span id="cb2-61"><a href="#cb2-61"></a>    K_known <span class="op">=</span> np.delete(K_del,<span class="bu">slice</span>(<span class="dv">1</span>,<span class="op">-</span><span class="dv">1</span>,<span class="dv">1</span>),<span class="dv">1</span>)</span>
+<span id="cb2-62"><a href="#cb2-62"></a>    K_unknown <span class="op">=</span> np.delete(K_del,[<span class="dv">0</span>,<span class="op">-</span><span class="dv">1</span>],<span class="dv">1</span>)</span>
+<span id="cb2-63"><a href="#cb2-63"></a>    <span class="co"># print(&#39;K_known&#39;)</span></span>
+<span id="cb2-64"><a href="#cb2-64"></a>    <span class="co"># print(K_known)</span></span>
+<span id="cb2-65"><a href="#cb2-65"></a>    <span class="co"># print(&#39;K_unknown&#39;)</span></span>
+<span id="cb2-66"><a href="#cb2-66"></a>    <span class="co"># print(K_unknown)</span></span>
+<span id="cb2-67"><a href="#cb2-67"></a></span>
+<span id="cb2-68"><a href="#cb2-68"></a>    b_prime <span class="op">=</span> b_del <span class="op">-</span> (K_known <span class="op">@</span> u_known)</span>
+<span id="cb2-69"><a href="#cb2-69"></a>    <span class="co"># print(b_prime)</span></span>
+<span id="cb2-70"><a href="#cb2-70"></a></span>
+<span id="cb2-71"><a href="#cb2-71"></a>    u <span class="op">=</span> gausselimination_withpivot(N_SIZE_in<span class="dv">-2</span>,K_unknown,b_prime)</span>
+<span id="cb2-72"><a href="#cb2-72"></a>    <span class="bu">print</span>(u)</span>
+<span id="cb2-73"><a href="#cb2-73"></a>    <span class="co"># u.insert(0,U_0)</span></span>
+<span id="cb2-74"><a href="#cb2-74"></a>    <span class="co"># u.append(U_LAST)</span></span>
+<span id="cb2-75"><a href="#cb2-75"></a>    <span class="cf">return</span> np.insert(np.insert(u,<span class="bu">len</span>(u),U_init[<span class="dv">1</span>]), <span class="dv">0</span>, U_init[<span class="dv">0</span>])</span></code></pre></div>
+</div>
+<div class="cell markdown">
+<ol class="incremental">
+<li>u(x) の理論解を求めよ。</li>
+</ol>
+<p>$ u = x $ が理論会となる</p>
+</div>
+<div class="cell code" data-execution_count="14">
+<div class="sourceCode" id="cb3"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1"></a>U_0,U_LAST <span class="op">=</span> <span class="dv">0</span>,<span class="dv">1</span></span></code></pre></div>
+</div>
+<div class="cell markdown">
+<ol class="incremental">
+<li>Fig. 1 のメッシュ(一次元の線形要素) を使って u(x) を求め、解析解と比較 せよ。</li>
+</ol>
+</div>
+<div class="cell code" data-execution_count="15">
+<div class="sourceCode" id="cb4"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1"></a>COORD <span class="op">=</span> [<span class="fl">0.00</span>,<span class="fl">0.25</span>,<span class="fl">0.50</span>,<span class="fl">1.0</span>]</span>
+<span id="cb4-2"><a href="#cb4-2"></a>N_SIZE <span class="op">=</span> <span class="bu">len</span>(COORD)</span>
+<span id="cb4-3"><a href="#cb4-3"></a></span>
+<span id="cb4-4"><a href="#cb4-4"></a>K_glob <span class="op">=</span> fill_K_glob(COORD,N_SIZE)</span>
+<span id="cb4-5"><a href="#cb4-5"></a><span class="bu">print</span>(K_glob)</span>
+<span id="cb4-6"><a href="#cb4-6"></a></span>
+<span id="cb4-7"><a href="#cb4-7"></a>answer <span class="op">=</span> solve_with_cricon(N_SIZE,K_glob,np.zeros(N_SIZE),[U_0,U_LAST])</span>
+<span id="cb4-8"><a href="#cb4-8"></a></span>
+<span id="cb4-9"><a href="#cb4-9"></a><span class="bu">print</span>(answer)</span>
+<span id="cb4-10"><a href="#cb4-10"></a></span>
+<span id="cb4-11"><a href="#cb4-11"></a></span>
+<span id="cb4-12"><a href="#cb4-12"></a></span>
+<span id="cb4-13"><a href="#cb4-13"></a><span class="co"># u = gausselimination_withpivot(N_SIZE,K_glob,np.zeros(N_SIZE))</span></span>
+<span id="cb4-14"><a href="#cb4-14"></a></span>
+<span id="cb4-15"><a href="#cb4-15"></a></span></code></pre></div>
+<div class="output stream stdout">
+<pre><code>[[ 4. -4.  0.  0.]
+ [-4.  8. -4.  0.]
+ [ 0. -4.  6. -2.]
+ [ 0.  0. -2.  2.]]
+[0.25 0.5 ]
+[0.   0.25 0.5  1.  ]
+</code></pre>
+</div>
+</div>
+<div class="cell markdown">
+<p>これは、理論解と一致する。 (結果の配列=COORD となっているので、　x=yとなっている)</p>
+</div>
+<div class="cell markdown">
+<ol class="incremental">
+<li>Fig. 2 のメッシュ(一次元の線形要素) を使って u(x) を求め、解析解と比較 せよ。</li>
+</ol>
+</div>
+<div class="cell code" data-execution_count="16">
+<div class="sourceCode" id="cb6"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1"></a>COORD <span class="op">=</span> [x<span class="op">/</span><span class="dv">10</span> <span class="cf">for</span> x <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">0</span>,<span class="dv">11</span>,<span class="dv">1</span>) ]</span>
+<span id="cb6-2"><a href="#cb6-2"></a>N_SIZE <span class="op">=</span> <span class="bu">len</span>(COORD)</span>
+<span id="cb6-3"><a href="#cb6-3"></a></span>
+<span id="cb6-4"><a href="#cb6-4"></a><span class="bu">print</span>(COORD)</span>
+<span id="cb6-5"><a href="#cb6-5"></a></span>
+<span id="cb6-6"><a href="#cb6-6"></a>K_glob <span class="op">=</span> fill_K_glob(COORD,N_SIZE)</span>
+<span id="cb6-7"><a href="#cb6-7"></a><span class="co"># print(K_glob)</span></span>
+<span id="cb6-8"><a href="#cb6-8"></a></span>
+<span id="cb6-9"><a href="#cb6-9"></a>answer <span class="op">=</span> solve_with_cricon(N_SIZE,K_glob,np.zeros(N_SIZE),[U_0,U_LAST])</span>
+<span id="cb6-10"><a href="#cb6-10"></a></span>
+<span id="cb6-11"><a href="#cb6-11"></a><span class="bu">print</span>(answer)</span></code></pre></div>
+<div class="output stream stdout">
+<pre><code>[0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+[0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9]
+[0.  0.1 0.2 0.3 0.4 0.5 0.6 0.7 0.8 0.9 1. ]
+</code></pre>
+</div>
+</div>
+<div class="cell markdown">
+<p>これも、理論解と一致する。</p>
+</div>
+<div class="cell markdown">
+<ol class="incremental">
+<li>加点対象（必須ではないがあれば加点します）：Fig. 3 のメッシュ(一次元の 線形要素) を使って u(x) を求め、解析解と比較せよ。Fig. 1, 2 のメッシュ のように節点番号・要素番号が昇順に並んでいた場合と比べ、どのように データ構造・プログラムを変更する必要があったか説明せよ。</li>
+</ol>
+</div>
